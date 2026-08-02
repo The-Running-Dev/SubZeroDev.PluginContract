@@ -1,0 +1,83 @@
+# Reference manifest. Validates against schemas/plugin-manifest.schema.json.
+# Authored in YAML; canonicalized to JSON for validation and signing.
+schemaVersion: "1.0.0"
+id: subzerodev.github
+name: SubZeroDev GitHub
+version: 1.0.0
+description: Collects and normalizes GitHub repository metadata.
+license: MIT
+
+commands:
+  - id: sync
+    description: Download or incrementally update repository metadata.
+    inputSchema: schemas/sync.input.schema.json
+    outputSchema: schemas/sync.output.schema.json
+    timeout: PT15M
+    idempotency: idempotent
+    artifacts:
+      - name: projects
+        path: projects.json
+        mediaType: application/json
+        schemaRef: schemas/projects.schema.json
+        required: true
+      - name: sync-report
+        path: sync-report.json
+        mediaType: application/json
+        required: true
+
+  - id: export
+    description: Write the canonical output set from a valid cache.
+    outputSchema: schemas/export.output.schema.json
+    timeout: PT2M
+    idempotency: idempotent
+
+  - id: validate
+    description: Validate configuration, credentials, and cache without doing the work.
+    timeout: PT1M
+    idempotency: idempotent
+
+runtimes:
+  # Production runtime: pinned by digest, because a version tag is mutable.
+  - id: docker
+    type: docker
+    image: ghcr.io/the-running-dev/subzerodev-github
+    digest: "sha256:0000000000000000000000000000000000000000000000000000000000000000"
+    entrypoint:
+      - subzerodev-github
+
+  # Development runtime: exempt from the digest requirement.
+  - id: node-local
+    type: node
+    packagePath: "."
+    entrypoint:
+      - node
+      - dist/cli.js
+    development: true
+
+secrets:
+  - id: github-token
+    required: true
+    environmentVariable: GITHUB_TOKEN
+    description: GitHub personal access token with read access to repositories.
+
+capabilities:
+  network:
+    required: true
+    destinations:
+      - api.github.com
+  filesystem:
+    read:
+      - config
+    write:
+      - cache
+      - output
+
+compatibility:
+  minimumAutomatorVersion: "1.0.0"
+  operatingSystems:
+    - linux
+    - windows
+    - macos
+  architectures:
+    - amd64
+    - arm64
