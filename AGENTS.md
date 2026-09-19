@@ -1,5 +1,8 @@
 # Working in the plugin contract
 
+**Read [`AGENTS.shared.md`](C:/Users/Ben/.agent-kit/AGENTS.shared.md) completely before this file.** It holds the rules every repository using the kit shares.
+
+
 This repository is the most consequential in the ecosystem and the most dangerous to edit carelessly.
 Every plugin and the Automator depend on it; it depends on nothing. A change here is a change to a
 published interface, not to a document.
