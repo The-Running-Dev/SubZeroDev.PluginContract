@@ -1,6 +1,6 @@
 # Working in the plugin contract
 
-**Read `AGENTS.shared.md` (home install: `C:/Users/Ben/.agent-kit/AGENTS.shared.md`) completely before this file.** It holds the rules every repository using the kit shares.
+**Read `AGENTS.shared.md` completely before this file.** It holds the rules every repository using the kit shares, resolved from the `AGENTKIT_HOME` environment variable if set, else `.agent-kit` in the home directory.
 
 
 This repository is the most consequential in the ecosystem and the most dangerous to edit carelessly.
