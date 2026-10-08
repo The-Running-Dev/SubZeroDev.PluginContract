@@ -2,9 +2,14 @@ import type { Config } from '@docusaurus/types';
 import type * as Preset from '@docusaurus/preset-classic';
 
 /**
- * Local Docusaurus config — overrides the base image's default when this
- * directory is copied over /template (see ./Dockerfile). Content lives in
- * ./docs (games/); the sidebar is ./sidebar.ts.
+ * Local Docusaurus config — overrides the template's default: the docs workflow
+ * (GitHub-ActionTemplates docs.yml) overlays this directory on its bundled
+ * template, and ./Dockerfile overlays it on the docs-template image for local
+ * preview. Content lives in ./docs; the sidebar is ./sidebar.ts.
+ *
+ * The docs workflow sets DOCS_URL and DOCS_BASE_URL from the repository's Pages
+ * settings when it deploys; without them (pull requests, local preview) the
+ * site is built for the root of https://example.com.
  *
  * Placeholder title/url/tagline — edit to taste. Broken-link checks are 'warn'
  * (not 'throw') to keep authoring frictionless; flip to 'throw' to gate builds.
@@ -12,8 +17,8 @@ import type * as Preset from '@docusaurus/preset-classic';
 const config: Config = {
   title: 'SubZeroDev.PluginContract',
   tagline: 'The SubZeroDev plugin contract: manifest and result-envelope schemas, CLI conventions, and conformance.',
-  url: 'https://example.com',
-  baseUrl: '/',
+  url: process.env.DOCS_URL || 'https://example.com',
+  baseUrl: `/${process.env.DOCS_BASE_URL ?? ''}/`.replace(/\/{2,}/g, '/'),
   onBrokenLinks: 'warn',
   markdown: {
     hooks: {
